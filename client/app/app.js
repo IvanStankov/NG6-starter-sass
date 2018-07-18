@@ -1,20 +1,43 @@
 import angular from 'angular';
 import uiRouter from 'angular-ui-router';
-import Common from './common/common';
-import Components from './components/components';
 import AppComponent from './app.component';
+
+import NavigationComponent from './components/navigation/navigation';
+
+import HomeComponent from './pages/home/home';
+import CreateComponent from './pages/create/create';
+
+import GoatsService from './services/GoatsService';
+
 import 'normalize.css';
+import 'bootstrap/dist/css/bootstrap.css';
 
 angular.module('app', [
-    uiRouter,
-    Common,
-    Components
-  ])
-  .config(($locationProvider) => {
-    "ngInject";
-    // @see: https://github.com/angular-ui/ui-router/wiki/Frequently-Asked-Questions
-    // #how-to-configure-your-server-to-work-with-html5mode
-    $locationProvider.html5Mode(true).hashPrefix('!');
-  })
+  uiRouter
+])
+.config(($locationProvider, $stateProvider, $urlRouterProvider) => {
+  "ngInject";
 
-  .component('app', AppComponent);
+  NavigationComponent.name,
+  CreateComponent.name,
+  HomeComponent.name
+
+  $stateProvider
+    .state('app', {
+      url: '/app',
+      abstract: true,
+      template: '<app></app>'
+    })
+    .state('app.home', {
+      url: '/home',
+      template: '<home></home>'
+    })
+    .state('app.create', {
+      url: '/create',
+      template: '<create></create>'
+    });
+
+    $urlRouterProvider.otherwise("/app/home");
+})
+.component('app', AppComponent)
+.factory('GoatsService', GoatsService);
